@@ -25,9 +25,6 @@ jobs:
       - name: Run tiup
         run: nohup /home/runner/.tiup/bin/tiup playground ${{ matrix.version }} > nohup.txt &
       
-      - name: Wait TiDB ready
-        run: sleep 5s && cat nohup.txt
+      - name: Wait TiDB until ready
+        run: while ! mysql -h 127.0.0.1 -P 4000 -u root -e "SELECT VERSION();"; do sleep 3; done
         shell: bash
-        
-      - name: Vertify TiDB connection from host
-        run: mysql -h 127.0.0.1 -P 4000 -u root -e "SELECT VERSION();"
